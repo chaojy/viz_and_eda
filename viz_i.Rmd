@@ -1,4 +1,275 @@
 ---
-title: "Visualization and EDA"
+title: "Visualization"
+subtitle: "Part I"
 output: github_document
 ---
+
+```{r setup}
+library(tidyverse)
+library(ggridges)
+```
+
+## Load the weather data
+
+```{r}
+weather_df =
+  rnoaa::meteo_pull_monitors(
+    c("USW00094728", "USC00519397", "USS0023B17S"),
+    var = c("PRCP", "TMIN", "TMAX"),
+    date_min = "2017-01-01",
+    date_max = "2017-12-31") %>% 
+  mutate(
+    name = recode(
+      id,
+      USW00094728 = "CentralPark_NY",
+      USC00519397 = "Waikiki_HA",
+      USS0023B17S = "Waterhole_WA"),
+    tmin = tmin / 10,
+    tmax = tmax / 10) %>% 
+  select(name, id, everything())
+
+
+weather_df
+```
+
+## Scatterplots!!
+
+Create my first scatterplot ever.
+
+```{r}
+ggplot(weather_df, aes(x = tmin, y = tmax)) +
+  geom_point()
+```
+
+New approach, same plot - use piping.  The benefit of this is you have the opportunity to do data manipulation (mutate, filter, or select) before the plot (code this immediately after the weather_df pipe command and before the ggplot() code).
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point()
+```
+
+Save and edit a plot object.
+
+```{r}
+weather_plot =
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax))
+
+weather_plot + geom_point()
+```
+
+## Advanced scatterplot ...
+
+Start with the same one and make it fancy!
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point() + 
+  geom_smooth(se = FALSE)
+```
+
+What about the `aes` placement?
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_point(aes(color = name)) +
+  geom_smooth()
+```
+
+Let's facet some things!!
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point() + 
+  geom_smooth(se = FALSE) +
+  facet_grid(. ~ name)
+```
+
+facet grid syntax is defined by the following:
+. means don't define rows of scatterplot facets.
+~ name means which variables define columns of scatterplot facets.
+
+See next examples which will switch the order.
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point() + 
+  geom_smooth(se = FALSE) +
+  facet_grid(name ~ .)
+```
+
+This seems to define scatterplot facets by rows.
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .2, size = .5) + 
+  geom_smooth(se = FALSE, size = 2) +
+  facet_grid(. ~ name)
+```
+
+The following three options are global, fixed options for the plot
+geom_point(alpha = .5) decreases opacity (or increases transparency) by 50%
+geom_point(size = .5) decreases the size of dots by 50%
+geom_smooth(se = FALSE, size = 2) increases the size of fit line by 200%
+
+But if, for example I add alpha = tmin, you can assign a graphic option that is related to the variable.
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, alpha = tmin, color = name)) +
+  geom_point() + 
+  geom_smooth(se = FALSE) +
+  facet_grid(. ~ name)
+```
+
+Here, there is a gradient of color density in the points that is a function of Tmin variable.  Is this something that might be meaningful to show?  Don't know, but this example shows that if you specify options within ggplot(aes()), graphic options are not fixed, but can change as a function of a variable.
+
+Now, let's combine some elements and try a new plot
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = date, y = tmax, color = name)) +
+  geom_point(aes(size = prcp), alpha = .5) +
+  geom_smooth(se = FALSE) +
+  facet_grid(. ~ name)
+
+```
+
+Adding aes(size = prcp), the size of the point is related to the amount of precipitation.  You can interpret the amount of precipitation as it relates to time of year.  There is a lot of power here.
+
+So started by defining a dataframe, defined some ggplot stuff, add  simple plot, etc.  By making a lot of plots and tweaking things, you can produce some great data visualization.
+
+
+
+## Some small notes
+
+How many geoms have to exist?
+
+You can have whatever geometries you want (geoms).
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_smooth(se = FALSE)
+```
+
+You can use a neat geom!
+Can try any number of these functions:
+  geom_hex()
+  geom_bin2d()
+  geom_density2d() 
+  geom_point()
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax)) +
+  geom_density2d() +
+  geom_point(alpha = .3)
+```
+
+
+## Univariate plots
+
+
+Histograms are really great.
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin)) +
+  geom_histogram()
+```
+
+Can we add color ...
+there are a lot of options, refer back to video.
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, fill = name)) +
+  geom_histogram(position = "dodge")
+```
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, fill = name)) +
+  geom_histogram() +
+  facet_grid(. ~ name)
+```
+
+There are different choices you can make as to how to visualize your data.  Pros and cons, strengths and weaknesses of different ways to show your data.
+
+Let's try a new geometry!
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, fill = name)) +
+  geom_density(alpha = .3)
+```
+
+Density plot is a histogram that is smoothed out around the edges.  Loose a little bit of information about individual data (little bumps and single points) in density plot but makes it easier to compare the overall shapes of these differences.  There are some other manipulations that can be done.
+
+What about box plots?
+
+```{r}
+weather_df %>% 
+  ggplot(aes(y = tmin)) +
+  geom_boxplot()
+```
+
+One box plot above.
+
+```{r}
+weather_df %>% 
+  ggplot(aes(y = tmin)) +
+  geom_boxplot()
+
+```
+
+by specifying x = name (a categorical variable which can bee counterintuitive), you can plot multiple box plots below:
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = name, y = tmin)) +
+  geom_boxplot()
+```
+
+Trendy plots :)
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = name, y = tmin, fill = name)) +
+  geom_violin(alpha = .5)
+```
+compare violin plot next to box plots - and then make decision as to which is more useful.
+to add median value to violin plot, would add a stat command, below:
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = name, y = tmin, fill = name)) +
+  geom_violin(alpha = .5) +
+  stat_summary(fun = "median")
+```
+fun = "median" provides the median
+
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = name, y = tmin, fill = name)) +
+  geom_violin(alpha = .5) +
+  stat_summary()
+```
+stat_summary() defaults to mean.
+
+Ridge plots -- the most popular plot of 2017.  Multiple density plots.  Can be useful.
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = tmin, y = name)) +
+  geom_density_ridges()
+```
+
+Ridge plots are especially useful for many categories that you are comparing between.  For example, all 50 states.
