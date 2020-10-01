@@ -474,3 +474,82 @@ weather_df %>%
 
 Ridge plots are especially useful for many categories that you are
 comparing between. For example, all 50 states.
+
+## Save and Embed
+
+Let’s save a scatterplot.
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5)
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_i_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
+
+Now that you have plot, define an object
+
+``` r
+weather_plot = 
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5)
+
+ggsave("weather_plot.pdf", weather_plot)
+```
+
+    ## Saving 7 x 5 in image
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+can save as pdf, png, etc. ggsave(“weather\_plot.pdf”, weather\_plot)
+will save the plot in the name specified in the quotation marks in the
+working directory
+
+``` r
+weather_plot = 
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5)
+
+ggsave("weather_plot.pdf", weather_plot, width = 8, height = 5)
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+specify some aspects of the plot.
+
+Can add the plots in a relative path
+
+``` r
+weather_plot = 
+  weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5)
+
+ggsave("./results/weather_plot.jpg", weather_plot, width = 8, height = 5)
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+What about embedding…
+
+``` r
+weather_plot
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_i_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+
+Embed at different size.
+
+``` r
+weather_plot
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_i_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
