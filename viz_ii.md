@@ -110,3 +110,62 @@ weather_df %>%
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
 ![](viz_ii_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+
+## Scales - helps control x-axis and y-axis properties
+
+Start with the same plot; can manipulate x and y scales.
+
+Depends on type of axis: continuous variable vs. discrete variable, for
+example. make sure to add the + (not pipe) between labs() and
+scale\_x\_continuous(). trans means transformation, e.g. trans = “sqrt”
+e.g. trans = “log” position means change position of y axis,
+e.g. position = “right”
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maximum daily temperature (C)",
+    caption = "Data from rnoaa package; temperatures in 2017."
+  ) +
+  scale_x_continuous(
+    breaks = c(-15, 0, 15),
+    labels = c("-15 C", "0", "15")
+  ) +
+  scale_y_continuous(
+    position = "right"
+  )
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_ii_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+
+Look at color scales e.g. scale\_color\_hue(h = c(0, 360)) 0 to 360 is
+range. e.g. name = “Location” will change the legend for the name of
+locations viridis::scale\_color\_viridis() is a diffrent color package.
+Assumes continuous variable so must define, in this case, a discrete
+variable by specifying “discrete = TRUE”
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = tmin, y = tmax, color = name)) +
+  geom_point(alpha = .5) +
+  labs(
+    title = "Temperature plot",
+    x = "Minimum daily temperature (C)",
+    y = "Maximum daily temperature (C)",
+    caption = "Data from rnoaa package; temperatures in 2017."
+  ) +
+  viridis::scale_color_viridis(
+    name = "Location", 
+    discrete = TRUE
+  )
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+![](viz_ii_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
