@@ -67,3 +67,58 @@ weather_df %>%
   ungroup(month)
 ```
 
+## counting things
+
+count month observations
+```{r}
+weather_df %>% 
+  group_by(month) %>% 
+  summarize(n_obs = n())
+```
+
+```{r}
+weather_df %>% 
+  group_by(name) %>% 
+  summarize(n_obs = n())
+```
+
+```{r}
+weather_df %>% 
+  group_by(name, month) %>% 
+  summarize(n_obs = n())
+```
+
+we can use `count()` as well - will generate the same thing as group_by()
+
+```{r}
+weather_df %>% 
+  count(month, name = "n_obs")
+```
+
+```{r}
+weather_df %>% 
+  count(name, month, name = "n_obs")
+```
+
+**Never** use base R's `table`
+
+```{r, eval = FALSE}
+weather_df %>% 
+  pull(month) %>% 
+  table()
+```
+
+Why?
+  Because the result of this is not a dataframe.  Not useable for later purpose
+  
+Other helpful counters
+
+```{r}
+weather_df %>% 
+  group_by(month) %>% 
+  summarize(
+    n_obs = n(),
+    n_days = n_distinct(date)
+    )
+```
+This above code tells me the number of observations in the grouping specificed (month), AND it also tells us how many of those dates are distinct.
