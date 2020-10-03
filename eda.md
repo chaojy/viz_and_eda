@@ -318,3 +318,72 @@ weather_df %>%
 This above code tells me the number of observations in the grouping
 specificed (month), AND it also tells us how many of those dates are
 distinct.
+
+## A digression on 2x2 tables
+
+``` r
+weather_df %>% 
+  filter(name != "Waikiki_HA") %>% 
+  mutate(
+    cold = case_when(
+      tmax < 5 ~ "cold",
+      tmax >= 5 ~ "not cold",
+      TRUE      ~ ""
+    )
+  ) %>% 
+  group_by(name, cold) %>% 
+  summarize(count = n())
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+    ## # A tibble: 4 x 3
+    ## # Groups:   name [2]
+    ##   name           cold     count
+    ##   <chr>          <chr>    <int>
+    ## 1 CentralPark_NY cold        44
+    ## 2 CentralPark_NY not cold   321
+    ## 3 Waterhole_WA   cold       172
+    ## 4 Waterhole_WA   not cold   193
+
+``` r
+weather_df %>% 
+  filter(name != "Waikiki_HA") %>% 
+  mutate(
+    cold = case_when(
+      tmax < 5 ~ "cold",
+      tmax >= 5 ~ "not cold",
+      TRUE      ~ ""
+    )
+  ) %>% 
+  group_by(name, cold) %>% 
+  summarize(count = n())
+```
+
+    ## `summarise()` regrouping output by 'name' (override with `.groups` argument)
+
+    ## # A tibble: 4 x 3
+    ## # Groups:   name [2]
+    ##   name           cold     count
+    ##   <chr>          <chr>    <int>
+    ## 1 CentralPark_NY cold        44
+    ## 2 CentralPark_NY not cold   321
+    ## 3 Waterhole_WA   cold       172
+    ## 4 Waterhole_WA   not cold   193
+
+``` r
+weather_df %>% 
+  filter(name != "Waikiki_HA") %>% 
+  mutate(
+    cold = case_when(
+      tmax < 5 ~ "cold",
+      tmax >= 5 ~ "not cold",
+      TRUE      ~ ""
+    )
+  ) %>% 
+janitor::tabyl(name, cold)
+```
+
+    ##            name cold not cold
+    ##  CentralPark_NY   44      321
+    ##    Waterhole_WA  172      193
