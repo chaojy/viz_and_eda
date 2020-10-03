@@ -324,7 +324,7 @@ tmax_date_p =
   theme(legend.position = "none")
 ```
 
-So now you have these three plots that have fundamental differencs. you
+So now you have these three plots that have fundamental differences. you
 can’t use facet to organize and present together But, you can use
 patchwork. Can do a lot with this - go to patchwork webpage to learn
 more
@@ -412,3 +412,117 @@ tmax_tmin_plot / (prcp_dens_p + tmax_date_p)
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
 ![](viz_ii_files/figure-gfm/unnamed-chunk-13-5.png)<!-- -->
+
+## the challenge of data manipulation coupled with ggplot - this is a next level interaction - THIS IS HARD. THIS IS A LOT. DON’T GET DISCOURAGED THAT THIS ISN’T EASY\!
+
+## Data manipulation
+
+Control your factors.
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = name, y = tmax, fill = name)) +
+  geom_violin(alpha = .5)
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+![](viz_ii_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+
+R, behind the scenes, has defaulted chr variation in alphabetical order
+(as a factor variable) We are trying to now change into a different
+order by manipulating the code (not a ggplot customization issue) Data
+manipulation issue/challenge now dealing with factor variable-type
+
+``` r
+weather_df %>% 
+  mutate(
+    name = factor(name)
+  ) %>% 
+  ggplot(aes(x = name, y = tmax, fill = name)) +
+  geom_violin(alpha = .5)
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+![](viz_ii_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+
+``` r
+weather_df
+```
+
+    ## # A tibble: 1,095 x 6
+    ##    name           id          date        prcp  tmax  tmin
+    ##    <chr>          <chr>       <date>     <dbl> <dbl> <dbl>
+    ##  1 CentralPark_NY USW00094728 2017-01-01     0   8.9   4.4
+    ##  2 CentralPark_NY USW00094728 2017-01-02    53   5     2.8
+    ##  3 CentralPark_NY USW00094728 2017-01-03   147   6.1   3.9
+    ##  4 CentralPark_NY USW00094728 2017-01-04     0  11.1   1.1
+    ##  5 CentralPark_NY USW00094728 2017-01-05     0   1.1  -2.7
+    ##  6 CentralPark_NY USW00094728 2017-01-06    13   0.6  -3.8
+    ##  7 CentralPark_NY USW00094728 2017-01-07    81  -3.2  -6.6
+    ##  8 CentralPark_NY USW00094728 2017-01-08     0  -3.8  -8.8
+    ##  9 CentralPark_NY USW00094728 2017-01-09     0  -4.9  -9.9
+    ## 10 CentralPark_NY USW00094728 2017-01-10     0   7.8  -6  
+    ## # … with 1,085 more rows
+
+This has now changed name to a factor. The plot looks the same
+
+``` r
+weather_df %>% 
+  mutate(
+    name = factor(name),
+    name = forcats::fct_relevel(name, c("Waikiki_HA"))
+  ) %>% 
+  ggplot(aes(x = name, y = tmax, fill = name)) +
+  geom_violin(alpha = .5)
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+![](viz_ii_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+
+Now, behind the scenes in that previous chunk, weather\_df name variable
+is still character but it has changed the factor leveling to make
+Waikiki first, CentralPark goes to second, Waterhole still third.
+
+There are other relevel commands and customizations.
+
+Now, What if I wanted densities for tmin and tmax simultaneously? Make
+tmax and tmin long format.
+
+``` r
+weather_df %>% 
+  filter(name == "CentralPark_NY") %>% 
+  pivot_longer(
+    tmax:tmin,
+    names_to = "observation",
+    values_to = "temperatures"
+  ) %>% 
+  ggplot(aes(x = temperatures, fill = observation)) +
+  geom_density(alpha = .5)
+```
+
+![](viz_ii_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+
+Now facet by name
+
+``` r
+weather_df %>% 
+  pivot_longer(
+    tmax:tmin,
+    names_to = "observation",
+    values_to = "temperatures"
+  ) %>% 
+  ggplot(aes(x = temperatures, fill = observation)) +
+  geom_density(alpha = .5) +
+  facet_grid(. ~ name)
+```
+
+    ## Warning: Removed 18 rows containing non-finite values (stat_density).
+
+![](viz_ii_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+
+The point here is sometimes it is not a ggplot issue - it is a data
+tidiness or data manipulation issue. In the preceding example, the pivot
+longer concept was essential.

@@ -244,7 +244,7 @@ tmax_date_p =
   theme(legend.position = "none")
 ```
 
-So now you have these three plots that have fundamental differencs.  you can't use facet to organize and present together
+So now you have these three plots that have fundamental differences.  you can't use facet to organize and present together
 But, you can use patchwork.  Can do a lot with this - go to patchwork webpage to learn more
 
 ```{r}
@@ -273,5 +273,82 @@ tmax_tmin_plot + prcp_dens_p + tmax_date_p
 tmax_tmin_plot + (prcp_dens_p + tmax_date_p)
 tmax_tmin_plot / (prcp_dens_p + tmax_date_p)
 (tmax_tmin_plot + prcp_dens_p) / tmax_date_p
+```
+
+## the challenge of data manipulation coupled with ggplot - this is a next level interaction - THIS IS HARD.  THIS IS A LOT.  DON'T GET DISCOURAGED THAT THIS ISN'T EASY!
+
+## Data manipulation
+
+Control your factors.
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = name, y = tmax, fill = name)) +
+  geom_violin(alpha = .5)
+```
+
+R, behind the scenes, has defaulted chr variation in alphabetical order (as a factor variable)
+We are trying to now change into a different order by manipulating the code (not a ggplot customization issue)
+Data manipulation issue/challenge now dealing with factor variable-type
+
+```{r}
+weather_df %>% 
+  mutate(
+    name = factor(name)
+  ) %>% 
+  ggplot(aes(x = name, y = tmax, fill = name)) +
+  geom_violin(alpha = .5)
+
+weather_df
 
 ```
+
+This has now changed name to a factor.  The plot looks the same
+
+```{r}
+weather_df %>% 
+  mutate(
+    name = factor(name),
+    name = forcats::fct_relevel(name, c("Waikiki_HA"))
+  ) %>% 
+  ggplot(aes(x = name, y = tmax, fill = name)) +
+  geom_violin(alpha = .5)
+```
+
+Now, behind the scenes in that previous chunk, weather_df name variable is still character but it has changed the factor leveling to make Waikiki first, CentralPark goes to second, Waterhole still third.
+
+There are other relevel commands and customizations.
+
+Now,
+What if I wanted densities for tmin and tmax simultaneously?  Make tmax and tmin long format.
+
+```{r}
+weather_df %>% 
+  filter(name == "CentralPark_NY") %>% 
+  pivot_longer(
+    tmax:tmin,
+    names_to = "observation",
+    values_to = "temperatures"
+  ) %>% 
+  ggplot(aes(x = temperatures, fill = observation)) +
+  geom_density(alpha = .5)
+```
+
+Now facet by name
+
+```{r}
+weather_df %>% 
+  pivot_longer(
+    tmax:tmin,
+    names_to = "observation",
+    values_to = "temperatures"
+  ) %>% 
+  ggplot(aes(x = temperatures, fill = observation)) +
+  geom_density(alpha = .5) +
+  facet_grid(. ~ name)
+```
+
+The point here is sometimes it is not a ggplot issue - it is a data tidiness or data manipulation issue.  In the preceding example, the pivot longer concept was essential.
+
+
+
