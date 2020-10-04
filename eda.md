@@ -694,3 +694,15 @@ conceptually, this is how yuo would do it in 6 lines of code\! From
 coding perspective, answering a relatively complex question in a way
 that is clear and coherent in a pretty short sequence of code. Pat
 yourself on the back.
+
+## Quick note
+
+summarize only gets you so far. powerful. but some questions requiring
+some analyses cannot be solved with summarize. but for now, summarize
+works. someday, we will have to do something more complicated. but this
+is very good for now.
+
+BIG SUMMARY SO FAR naming code/variables in files r markdown using git
+and git hub reading in data manipulating data tidying data making plots
+and customizing it exploratory analyses covering a lot of ground takes
+time to congeal
