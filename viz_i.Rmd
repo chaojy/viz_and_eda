@@ -7,6 +7,13 @@ output: github_document
 ```{r setup}
 library(tidyverse)
 library(ggridges)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
+
 ```
 
 ## Load the weather data
@@ -330,3 +337,133 @@ Embed at different size.
 ```{r, fig.width=12, fig.height=6}
 weather_plot
 ```
+
+Learning assessment #1
+
+```{r}
+weather_df %>% 
+  filter(name == "CentralPark_NY") %>% 
+  mutate(
+    tmax_f = (tmax * ((9 / 5) + 32)),
+    tmin_f = (tmin * ((9 / 5) + 32))
+  ) %>% 
+  ggplot(aes(x = tmin, y = tmax_f, color = name)) +
+  geom_point(alpha = .5) +
+  geom_smooth(se = FALSE)
+
+```
+
+Not sure how to convert units from celsius to farenheit - let's see how Jeff does it:
+
+```{r}
+weather_df %>% 
+  filter(name == "CentralPark_NY") %>% 
+  mutate(
+    tmax_fahr = tmax * (9 / 5) + 32,
+    tmin_fahr = tmin * (9 / 5) + 32) %>% 
+  ggplot(aes(x = tmin_fahr, y = tmax_fahr)) +
+  geom_point(alpha = .5) + 
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+Jeff doesn't use a function to convert temperature, he specificies the arithmetic conversion.  Also, he specifies a method within geom_smooth to specify.
+
+Learning Assessment #2
+
+Why are these two different??
+
+```{r}
+ggplot(weather_df) + geom_point(aes(x = tmax, y = tmin), color = "blue")
+ggplot(weather_df) + geom_point(aes(x = tmax, y = tmin, color = "green"))
+```
+"In the first attempt, we’re defining the color of the points by hand; in the second attempt, we’re implicitly creating a color variable that has the value blue everywhere; ggplot is then assigning colors according to this variable using the default color scheme."
+
+Learning Assessment #3
+
+Make plots that compare precipiation across locations.  Try a histogram, a density plot, a boxplot, a violin plot, and a ridgeplot; use aesthetic mappings to make your figure readable.
+
+```{r}
+weather_df %>% 
+  ggplot(aes(x = prcp, color = name)) + 
+    geom_histogram() +
+  facet_grid(. ~ name)
+
+weather_df %>% 
+  ggplot(aes(x = prcp, color = name)) + 
+  geom_density() +
+  facet_grid(. ~ name)
+
+weather_df %>% 
+  ggplot(aes(x = prcp, color = name)) + 
+  geom_boxplot() +
+  facet_grid(. ~ name)
+
+##weather_df %>% 
+##  ggplot(aes(x = prcp, color = name)) + 
+##  geom_violin() +
+##  facet_grid(. ~ name)
+## doesnt work because needs y = name, no facet required
+
+weather_df %>% 
+  ggplot(aes(x = prcp, y = name, color = name)) + 
+  geom_violin()
+
+weather_df %>% 
+  ggplot(aes(x = prcp, y = name, color = name)) + 
+  geom_density_ridges()
+```
+
+Jeff's code:
+
+```{r}
+##I’ll show a few possibilities, although this is by no means exhaustive!
+
+##First a density plot:
+
+ggplot(weather_df, aes(x = prcp)) + 
+  geom_density(aes(fill = name), alpha = .5) 
+
+##Next a ridge plot:
+
+ggplot(weather_df, aes(x = prcp, y = name)) + 
+  geom_density_ridges(scale = .85)
+
+##Last a boxplot:
+
+ggplot(weather_df, aes(y = prcp, x = name)) + 
+  geom_boxplot() 
+
+##This is a tough variable to plot because of the highly skewed distribution in each location. Of these, I’d probably choose the boxplot because it shows the outliers most clearly. If the “bulk” of the data were interesting, I’d probably compliment this with a plot showing data for all precipitation less than 100, or for a data omitting days with no precipitation.
+
+weather_df %>% 
+  filter(prcp > 0) %>% 
+  ggplot(aes(x = prcp, y = name)) + 
+  geom_density_ridges(scale = .85)
+
+```
+
+For ridge plot, need to specify that y is names.  Grouping in built into the plot.  Also, using scale to separate the peaks.
+```{r}
+weather_df %>% 
+  ggplot(aes(x = prcp, y = name, color = name)) + 
+  geom_density_ridges(scale = .85)
+```
+
+For boxplots, y axis should be the variable of interest.  Facet also not needed, somehow, as R knows to separate
+
+```{r}
+weather_df %>% 
+  ggplot(aes(y = prcp, color = name)) + 
+  geom_boxplot()
+```
+
+Learning Assessment #final
+
+What happens when you set global options for figures sizes in the "setup" code chunk and re-knit document?  What happens when you change fig.asp?  What about out.width?
+
+So this is the code chunk that Jeff likes:
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)

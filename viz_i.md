@@ -18,6 +18,12 @@ library(tidyverse)
 
 ``` r
 library(ggridges)
+
+knitr::opts_chunk$set(
+  fig.width = 6,
+  fig.asp = .6,
+  out.width = "90%"
+)
 ```
 
 ## Load the weather data
@@ -92,7 +98,7 @@ ggplot(weather_df, aes(x = tmin, y = tmax)) +
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-2-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-2-1.png" width="90%" />
 
 New approach, same plot - use piping. The benefit of this is you have
 the opportunity to do data manipulation (mutate, filter, or select)
@@ -107,7 +113,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-3-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-3-1.png" width="90%" />
 
 Save and edit a plot object.
 
@@ -121,7 +127,7 @@ weather_plot + geom_point()
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-4-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-4-1.png" width="90%" />
 
 ## Advanced scatterplot …
 
@@ -140,7 +146,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-5-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-5-1.png" width="90%" />
 
 What about the `aes` placement?
 
@@ -157,7 +163,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-6-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-6-1.png" width="90%" />
 
 Let’s facet some things\!\!
 
@@ -175,7 +181,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-7-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-7-1.png" width="90%" />
 
 facet grid syntax is defined by the following: . means don’t define rows
 of scatterplot facets. \~ name means which variables define columns of
@@ -197,7 +203,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-8-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-8-1.png" width="90%" />
 
 This seems to define scatterplot facets by rows.
 
@@ -215,7 +221,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-9-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-9-1.png" width="90%" />
 
 The following three options are global, fixed options for the plot
 geom\_point(alpha = .5) decreases opacity (or increases transparency) by
@@ -240,7 +246,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-10-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-10-1.png" width="90%" />
 
 Here, there is a gradient of color density in the points that is a
 function of Tmin variable. Is this something that might be meaningful to
@@ -264,7 +270,7 @@ weather_df %>%
 
     ## Warning: Removed 3 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-11-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-11-1.png" width="90%" />
 
 Adding aes(size = prcp), the size of the point is related to the amount
 of precipitation. You can interpret the amount of precipitation as it
@@ -290,7 +296,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing non-finite values (stat_smooth).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-12-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-12-1.png" width="90%" />
 
 You can use a neat geom\! Can try any number of these functions:
 geom\_hex() geom\_bin2d() geom\_density2d() geom\_point()
@@ -306,7 +312,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-13-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-13-1.png" width="90%" />
 
 ## Univariate plots
 
@@ -322,7 +328,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing non-finite values (stat_bin).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-14-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-14-1.png" width="90%" />
 
 Can we add color … there are a lot of options, refer back to video.
 
@@ -336,7 +342,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing non-finite values (stat_bin).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-15-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-15-1.png" width="90%" />
 
 ``` r
 weather_df %>% 
@@ -349,7 +355,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing non-finite values (stat_bin).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-16-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-16-1.png" width="90%" />
 
 There are different choices you can make as to how to visualize your
 data. Pros and cons, strengths and weaknesses of different ways to show
@@ -365,7 +371,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing non-finite values (stat_density).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-17-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-17-1.png" width="90%" />
 
 Density plot is a histogram that is smoothed out around the edges. Loose
 a little bit of information about individual data (little bumps and
@@ -383,7 +389,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing non-finite values (stat_boxplot).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-18-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-18-1.png" width="90%" />
 
 One box plot above.
 
@@ -395,7 +401,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing non-finite values (stat_boxplot).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-19-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-19-1.png" width="90%" />
 
 by specifying x = name (a categorical variable which can bee
 counterintuitive), you can plot multiple box plots below:
@@ -408,7 +414,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing non-finite values (stat_boxplot).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-20-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-20-1.png" width="90%" />
 
 Trendy plots :)
 
@@ -420,10 +426,10 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing non-finite values (stat_ydensity).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-21-1.png)<!-- --> compare
-violin plot next to box plots - and then make decision as to which is
-more useful. to add median value to violin plot, would add a stat
-command, below:
+<img src="viz_i_files/figure-gfm/unnamed-chunk-21-1.png" width="90%" />
+compare violin plot next to box plots - and then make decision as to
+which is more useful. to add median value to violin plot, would add a
+stat command, below:
 
 ``` r
 weather_df %>% 
@@ -438,8 +444,8 @@ weather_df %>%
 
     ## Warning: Removed 3 rows containing missing values (geom_segment).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-22-1.png)<!-- --> fun =
-“median” provides the median
+<img src="viz_i_files/figure-gfm/unnamed-chunk-22-1.png" width="90%" />
+fun = “median” provides the median
 
 ``` r
 weather_df %>% 
@@ -454,7 +460,7 @@ weather_df %>%
 
     ## No summary function supplied, defaulting to `mean_se()`
 
-![](viz_i_files/figure-gfm/unnamed-chunk-23-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-23-1.png" width="90%" />
 stat\_summary() defaults to mean.
 
 Ridge plots – the most popular plot of 2017. Multiple density plots. Can
@@ -470,7 +476,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing non-finite values (stat_density_ridges).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-24-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-24-1.png" width="90%" />
 
 Ridge plots are especially useful for many categories that you are
 comparing between. For example, all 50 states.
@@ -487,7 +493,7 @@ weather_df %>%
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-25-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-25-1.png" width="90%" />
 
 Now that you have plot, define an object
 
@@ -500,7 +506,7 @@ weather_plot =
 ggsave("weather_plot.pdf", weather_plot)
 ```
 
-    ## Saving 7 x 5 in image
+    ## Saving 6 x 3.6 in image
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
@@ -542,7 +548,7 @@ weather_plot
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-29-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-29-1.png" width="90%" />
 
 Embed at different size.
 
@@ -552,4 +558,226 @@ weather_plot
 
     ## Warning: Removed 15 rows containing missing values (geom_point).
 
-![](viz_i_files/figure-gfm/unnamed-chunk-30-1.png)<!-- -->
+<img src="viz_i_files/figure-gfm/unnamed-chunk-30-1.png" width="90%" />
+
+Learning assessment \#1
+
+``` r
+weather_df %>% 
+  filter(name == "CentralPark_NY") %>% 
+  mutate(
+    tmax_f = (tmax * ((9 / 5) + 32)),
+    tmin_f = (tmin * ((9 / 5) + 32))
+  ) %>% 
+  ggplot(aes(x = tmin, y = tmax_f, color = name)) +
+  geom_point(alpha = .5) +
+  geom_smooth(se = FALSE)
+```
+
+    ## `geom_smooth()` using method = 'loess' and formula 'y ~ x'
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-31-1.png" width="90%" />
+
+Not sure how to convert units from celsius to farenheit - let’s see how
+Jeff does it:
+
+``` r
+weather_df %>% 
+  filter(name == "CentralPark_NY") %>% 
+  mutate(
+    tmax_fahr = tmax * (9 / 5) + 32,
+    tmin_fahr = tmin * (9 / 5) + 32) %>% 
+  ggplot(aes(x = tmin_fahr, y = tmax_fahr)) +
+  geom_point(alpha = .5) + 
+  geom_smooth(method = "lm", se = FALSE)
+```
+
+    ## `geom_smooth()` using formula 'y ~ x'
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-32-1.png" width="90%" />
+
+Jeff doesn’t use a function to convert temperature, he specificies the
+arithmetic conversion. Also, he specifies a method within geom\_smooth
+to specify.
+
+Learning Assessment \#2
+
+Why are these two different??
+
+``` r
+ggplot(weather_df) + geom_point(aes(x = tmax, y = tmin), color = "blue")
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-33-1.png" width="90%" />
+
+``` r
+ggplot(weather_df) + geom_point(aes(x = tmax, y = tmin, color = "green"))
+```
+
+    ## Warning: Removed 15 rows containing missing values (geom_point).
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-33-2.png" width="90%" />
+“In the first attempt, we’re defining the color of the points by hand;
+in the second attempt, we’re implicitly creating a color variable that
+has the value blue everywhere; ggplot is then assigning colors according
+to this variable using the default color scheme.”
+
+Learning Assessment \#3
+
+Make plots that compare precipiation across locations. Try a histogram,
+a density plot, a boxplot, a violin plot, and a ridgeplot; use aesthetic
+mappings to make your figure readable.
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = prcp, color = name)) + 
+    geom_histogram() +
+  facet_grid(. ~ name)
+```
+
+    ## `stat_bin()` using `bins = 30`. Pick better value with `binwidth`.
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_bin).
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-34-1.png" width="90%" />
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = prcp, color = name)) + 
+  geom_density() +
+  facet_grid(. ~ name)
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density).
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-34-2.png" width="90%" />
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = prcp, color = name)) + 
+  geom_boxplot() +
+  facet_grid(. ~ name)
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_boxplot).
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-34-3.png" width="90%" />
+
+``` r
+##weather_df %>% 
+##  ggplot(aes(x = prcp, color = name)) + 
+##  geom_violin() +
+##  facet_grid(. ~ name)
+## doesnt work because needs y = name, no facet required
+
+weather_df %>% 
+  ggplot(aes(x = prcp, y = name, color = name)) + 
+  geom_violin()
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_ydensity).
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-34-4.png" width="90%" />
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = prcp, y = name, color = name)) + 
+  geom_density_ridges()
+```
+
+    ## Picking joint bandwidth of 4.61
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density_ridges).
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-34-5.png" width="90%" />
+
+Jeff’s code:
+
+``` r
+##I’ll show a few possibilities, although this is by no means exhaustive!
+
+##First a density plot:
+
+ggplot(weather_df, aes(x = prcp)) + 
+  geom_density(aes(fill = name), alpha = .5) 
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density).
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-35-1.png" width="90%" />
+
+``` r
+##Next a ridge plot:
+
+ggplot(weather_df, aes(x = prcp, y = name)) + 
+  geom_density_ridges(scale = .85)
+```
+
+    ## Picking joint bandwidth of 4.61
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density_ridges).
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-35-2.png" width="90%" />
+
+``` r
+##Last a boxplot:
+
+ggplot(weather_df, aes(y = prcp, x = name)) + 
+  geom_boxplot() 
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_boxplot).
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-35-3.png" width="90%" />
+
+``` r
+##This is a tough variable to plot because of the highly skewed distribution in each location. Of these, I’d probably choose the boxplot because it shows the outliers most clearly. If the “bulk” of the data were interesting, I’d probably compliment this with a plot showing data for all precipitation less than 100, or for a data omitting days with no precipitation.
+
+weather_df %>% 
+  filter(prcp > 0) %>% 
+  ggplot(aes(x = prcp, y = name)) + 
+  geom_density_ridges(scale = .85)
+```
+
+    ## Picking joint bandwidth of 19.7
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-35-4.png" width="90%" />
+
+For ridge plot, need to specify that y is names. Grouping in built into
+the plot. Also, using scale to separate the peaks.
+
+``` r
+weather_df %>% 
+  ggplot(aes(x = prcp, y = name, color = name)) + 
+  geom_density_ridges(scale = .85)
+```
+
+    ## Picking joint bandwidth of 4.61
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_density_ridges).
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-36-1.png" width="90%" />
+
+For boxplots, y axis should be the variable of interest. Facet also not
+needed, somehow, as R knows to separate
+
+``` r
+weather_df %>% 
+  ggplot(aes(y = prcp, color = name)) + 
+  geom_boxplot()
+```
+
+    ## Warning: Removed 3 rows containing non-finite values (stat_boxplot).
+
+<img src="viz_i_files/figure-gfm/unnamed-chunk-37-1.png" width="90%" />
+
+Learning Assessment \#final
+
+What happens when you set global options for figures sizes in the
+“setup” code chunk and re-knit document? What happens when you
+change fig.asp? What about out.width?
+
+So this is the code chunk that Jeff likes: knitr::opts\_chunk$set(
+fig.width = 6, fig.asp = .6, out.width = “90%” )
