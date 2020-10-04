@@ -706,3 +706,227 @@ BIG SUMMARY SO FAR naming code/variables in files r markdown using git
 and git hub reading in data manipulating data tidying data making plots
 and customizing it exploratory analyses covering a lot of ground takes
 time to congeal
+
+Learning assessments \#1
+
+PULSE data
+
+``` r
+library(haven)
+
+pulse_df = read_sas("./data/public_pulse_data.sas7bdat") %>% 
+  janitor::clean_names() %>% 
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit",
+    names_prefix = "bdi_score_",
+    values_to = "bdi"
+  ) %>% 
+  mutate(
+    visit = replace(visit, visit == "bl", "00m"),
+    visit = factor(visit, levels = str_c(c("00", "01", "06", "12"), "m"))) %>%
+  arrange(id, visit)
+  
+pulse_df %>% 
+  group_by(visit) %>% 
+  summarize(
+    mean_bdi = mean(bdi, na.rm = TRUE),
+    median_bdi = median(bdi, na.rm = TRUE)
+  ) %>% 
+ knitr::kable(digits = 2)
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+| visit | mean\_bdi | median\_bdi |
+| :---- | --------: | ----------: |
+| 00m   |      7.99 |           6 |
+| 01m   |      6.05 |           4 |
+| 06m   |      5.67 |           4 |
+| 12m   |      6.10 |           4 |
+
+Jeff’s code - let’s see how the output is similar or different from my
+code
+
+``` r
+pulse_jeff = 
+  haven::read_sas("./data/public_pulse_data.sas7bdat") %>%
+  janitor::clean_names() %>%
+  pivot_longer(
+    bdi_score_bl:bdi_score_12m,
+    names_to = "visit", 
+    names_prefix = "bdi_score_",
+    values_to = "bdi") %>%
+  select(id, visit, everything()) %>%
+  mutate(
+    visit = replace(visit, visit == "bl", "00m"),
+    visit = factor(visit, levels = str_c(c("00", "01", "06", "12"), "m"))) %>%
+  arrange(id, visit)
+
+pulse_jeff %>% 
+  group_by(visit) %>% 
+  summarize(
+    mean_bdi = mean(bdi, na.rm = TRUE),
+    median_bdi = median(bdi, na.rm = TRUE)) %>% 
+  knitr::kable(digits = 3)
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+| visit | mean\_bdi | median\_bdi |
+| :---- | --------: | ----------: |
+| 00m   |     7.995 |           6 |
+| 01m   |     6.046 |           4 |
+| 06m   |     5.672 |           4 |
+| 12m   |     6.097 |           4 |
+
+This quick summary suggests a relatively large drop in the typical BDI
+score from baseline to 1 month, with small or no changes thereafter.
+
+bl should be cahnged to 00m because otherwise, it comes at end of the
+table and doesn’t make sense. also, he recoded the visit variable to
+factor, which will allow for more manipulations later on.
+
+Learning assessments \#2
+
+FAS data
+
+``` r
+fas_litters =
+  read_csv("./data/FAS_litters.csv") %>% 
+  janitor::clean_names() %>% 
+  relocate(litter_number) %>% 
+  separate(group, into = c("dose", "day_of_tx"), sep = 3)
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   Group = col_character(),
+    ##   `Litter Number` = col_character(),
+    ##   `GD0 weight` = col_double(),
+    ##   `GD18 weight` = col_double(),
+    ##   `GD of Birth` = col_double(),
+    ##   `Pups born alive` = col_double(),
+    ##   `Pups dead @ birth` = col_double(),
+    ##   `Pups survive` = col_double()
+    ## )
+
+``` r
+fas_pups =
+  read_csv("./data/FAS_pups.csv") %>% 
+  janitor::clean_names()
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   `Litter Number` = col_character(),
+    ##   Sex = col_double(),
+    ##   `PD ears` = col_double(),
+    ##   `PD eyes` = col_double(),
+    ##   `PD pivot` = col_double(),
+    ##   `PD walk` = col_double()
+    ## )
+
+``` r
+fas_join =
+  left_join(fas_pups, fas_litters, by = "litter_number") %>% 
+  relocate(litter_number, dose, day_of_tx) %>% 
+  group_by(dose, day_of_tx) %>% 
+  summarize(
+    mean_pivot = mean(pd_pivot, na.rm = TRUE),
+    median_pivot = median(pd_pivot, na.rm = TRUE) 
+  ) %>% 
+  knitr::kable(digits = 3)
+```
+
+    ## `summarise()` regrouping output by 'dose' (override with `.groups` argument)
+
+Jeff’s code. Let’s see how it differs and learn why
+
+``` r
+pup_jeff = 
+  read_csv("./data/FAS_pups.csv") %>%
+  janitor::clean_names() %>%
+  mutate(sex = recode(sex, `1` = "male", `2` = "female")) 
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   `Litter Number` = col_character(),
+    ##   Sex = col_double(),
+    ##   `PD ears` = col_double(),
+    ##   `PD eyes` = col_double(),
+    ##   `PD pivot` = col_double(),
+    ##   `PD walk` = col_double()
+    ## )
+
+``` r
+litter_jeff = 
+  read_csv("./data/FAS_litters.csv") %>%
+  janitor::clean_names() %>%
+  separate(group, into = c("dose", "day_of_tx"), sep = 3)
+```
+
+    ## Parsed with column specification:
+    ## cols(
+    ##   Group = col_character(),
+    ##   `Litter Number` = col_character(),
+    ##   `GD0 weight` = col_double(),
+    ##   `GD18 weight` = col_double(),
+    ##   `GD of Birth` = col_double(),
+    ##   `Pups born alive` = col_double(),
+    ##   `Pups dead @ birth` = col_double(),
+    ##   `Pups survive` = col_double()
+    ## )
+
+``` r
+fas_jeff = left_join(pup_jeff, litter_jeff, by = "litter_number") 
+
+fas_jeff %>% 
+  group_by(dose, day_of_tx) %>% 
+  drop_na(dose) %>% 
+  summarize(mean_pivot = mean(pd_pivot, na.rm = TRUE)) %>% 
+  pivot_wider(
+    names_from = dose, 
+    values_from = mean_pivot) %>% 
+  knitr::kable(digits = 3)
+```
+
+    ## `summarise()` regrouping output by 'dose' (override with `.groups` argument)
+
+| day\_of\_tx |   Con |   Low |   Mod |
+| :---------- | ----: | ----: | ----: |
+| 7           | 7.000 | 7.939 | 6.984 |
+| 8           | 6.236 | 7.721 | 7.042 |
+
+in Jeff’s code, he just looked at mean values for mean\_pivot. he also
+pivoted wider so dose is in the columns in wide format. let’s try this
+code to understand it better
+
+``` r
+fas_join =
+  left_join(fas_pups, fas_litters, by = "litter_number") %>% 
+  relocate(litter_number, dose, day_of_tx) %>% 
+  group_by(dose, day_of_tx) %>%
+  drop_na(dose) %>% 
+  summarize(
+    mean_pivot = mean(pd_pivot, na.rm = TRUE)
+  ) %>% 
+  pivot_wider(
+    names_from = dose,
+    values_from = mean_pivot
+  ) %>% 
+  knitr::kable(digits = 3)
+```
+
+    ## `summarise()` regrouping output by 'dose' (override with `.groups` argument)
+
+he condensed a lot of stuff. got rid of NAs, pivoted to wider.
+
+“Note: In both of these examples, the data are structure such that
+repeated observations are made on the same study units. In the PULSE
+data, repeated observations are made on subjects over time; in the FAS
+data, pups are “repeated observations” within litters. The analyses
+here, and plots made previously, are exploratory – any more substantial
+claims would require appropriate statistical analysis for
+non-independent samples."
