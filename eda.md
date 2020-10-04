@@ -554,3 +554,143 @@ weather_df %>%
 | 2017-10-01 |            21.8 |        30.3 |           8.3 |
 | 2017-11-01 |            12.3 |        28.4 |           1.4 |
 | 2017-12-01 |             4.5 |        26.5 |           2.2 |
+
+## group\_by and mutate
+
+mutate also respects new grouping structure - beware because can cause
+problems if the grouping is unrecognized
+
+``` r
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(
+    mean_tmax = mean(tmax, na.rm = TRUE)
+  ) %>% view()
+```
+
+you may want to center your groups (group first, then mutate so that it
+works one group at a time) and center the data:
+
+``` r
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    centered_tmax = tmax - mean_tmax
+  ) %>%
+  ggplot(aes(x = date, y = centered_tmax, color = name)) +
+  geom_point()
+```
+
+    ## Warning: Removed 3 rows containing missing values (geom_point).
+
+<img src="eda_files/figure-gfm/unnamed-chunk-22-1.png" width="90%" />
+
+what about window functions in the preceding, you have repeated
+mean\_tmax for each row.
+
+ranking ..
+
+``` r
+weather_df %>% 
+  group_by(name, month) %>% 
+  mutate(temp_rank = min_rank(tmax)) %>% 
+  filter(temp_rank == 1) %>% 
+  view()
+```
+
+min\_rank function gives you the lowest rank (\#1) for the variable you
+specify
+
+``` r
+weather_df %>% 
+  group_by(name, month) %>% 
+  mutate(temp_rank = min_rank(desc(tmax))) %>% 
+  filter(temp_rank == 1) %>% 
+  view()
+```
+
+min\_rank(desc(tmax)) allows you to calculate from the bottom up.
+
+lag. take a bunch of variables (so row values), copy and shift over, and
+descend.
+
+``` r
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(
+    lag_temp = lag(tmax)
+  )
+```
+
+    ## # A tibble: 1,095 x 8
+    ## # Groups:   name [3]
+    ##    name           id          date        prcp  tmax  tmin month      lag_temp
+    ##    <chr>          <chr>       <date>     <dbl> <dbl> <dbl> <date>        <dbl>
+    ##  1 CentralPark_NY USW00094728 2017-01-01     0   8.9   4.4 2017-01-01     NA  
+    ##  2 CentralPark_NY USW00094728 2017-01-02    53   5     2.8 2017-01-01      8.9
+    ##  3 CentralPark_NY USW00094728 2017-01-03   147   6.1   3.9 2017-01-01      5  
+    ##  4 CentralPark_NY USW00094728 2017-01-04     0  11.1   1.1 2017-01-01      6.1
+    ##  5 CentralPark_NY USW00094728 2017-01-05     0   1.1  -2.7 2017-01-01     11.1
+    ##  6 CentralPark_NY USW00094728 2017-01-06    13   0.6  -3.8 2017-01-01      1.1
+    ##  7 CentralPark_NY USW00094728 2017-01-07    81  -3.2  -6.6 2017-01-01      0.6
+    ##  8 CentralPark_NY USW00094728 2017-01-08     0  -3.8  -8.8 2017-01-01     -3.2
+    ##  9 CentralPark_NY USW00094728 2017-01-09     0  -4.9  -9.9 2017-01-01     -3.8
+    ## 10 CentralPark_NY USW00094728 2017-01-10     0   7.8  -6   2017-01-01     -4.9
+    ## # … with 1,085 more rows
+
+``` r
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(
+    lag_temp = lag(tmax, 5)
+  )
+```
+
+    ## # A tibble: 1,095 x 8
+    ## # Groups:   name [3]
+    ##    name           id          date        prcp  tmax  tmin month      lag_temp
+    ##    <chr>          <chr>       <date>     <dbl> <dbl> <dbl> <date>        <dbl>
+    ##  1 CentralPark_NY USW00094728 2017-01-01     0   8.9   4.4 2017-01-01     NA  
+    ##  2 CentralPark_NY USW00094728 2017-01-02    53   5     2.8 2017-01-01     NA  
+    ##  3 CentralPark_NY USW00094728 2017-01-03   147   6.1   3.9 2017-01-01     NA  
+    ##  4 CentralPark_NY USW00094728 2017-01-04     0  11.1   1.1 2017-01-01     NA  
+    ##  5 CentralPark_NY USW00094728 2017-01-05     0   1.1  -2.7 2017-01-01     NA  
+    ##  6 CentralPark_NY USW00094728 2017-01-06    13   0.6  -3.8 2017-01-01      8.9
+    ##  7 CentralPark_NY USW00094728 2017-01-07    81  -3.2  -6.6 2017-01-01      5  
+    ##  8 CentralPark_NY USW00094728 2017-01-08     0  -3.8  -8.8 2017-01-01      6.1
+    ##  9 CentralPark_NY USW00094728 2017-01-09     0  -4.9  -9.9 2017-01-01     11.1
+    ## 10 CentralPark_NY USW00094728 2017-01-10     0   7.8  -6   2017-01-01      1.1
+    ## # … with 1,085 more rows
+
+lag by 5.
+
+lag allows you to compare today’s values with some specified prior day’s
+values (like means, etc.)
+
+``` r
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(temp_change = tmax - lag(tmax)) %>% 
+  summarize(
+    temp_change_max = max(temp_change, na.rm = TRUE),
+    temp_change_sd = sd(temp_change, na.rm = TRUE)
+  )
+```
+
+    ## `summarise()` ungrouping output (override with `.groups` argument)
+
+    ## # A tibble: 3 x 3
+    ##   name           temp_change_max temp_change_sd
+    ##   <chr>                    <dbl>          <dbl>
+    ## 1 CentralPark_NY            12.7           4.45
+    ## 2 Waikiki_HA                 6.7           1.23
+    ## 3 Waterhole_WA               8             3.13
+
+take home point: we answered the question: can you compute the day to
+day temperature variability and standard deviation for each of the
+weather station over the course of the year. Sounds difficult, but
+conceptually, this is how yuo would do it in 6 lines of code\! From
+coding perspective, answering a relatively complex question in a way
+that is clear and coherent in a pretty short sequence of code. Pat
+yourself on the back.

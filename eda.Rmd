@@ -238,3 +238,86 @@ weather_df %>%
   knitr::kable(digits = 1)
 ```
 
+## group_by and mutate
+mutate also respects new grouping structure - beware because can cause problems if the grouping is unrecognized
+
+```{r}
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(
+    mean_tmax = mean(tmax, na.rm = TRUE)
+  ) %>% view()
+```
+
+you may want to center your groups (group first, then mutate so that it works one group at a time) and center the data:
+
+```{r}
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(
+    mean_tmax = mean(tmax, na.rm = TRUE),
+    centered_tmax = tmax - mean_tmax
+  ) %>%
+  ggplot(aes(x = date, y = centered_tmax, color = name)) +
+  geom_point()
+```
+
+what about window functions
+in the preceding, you have repeated mean_tmax for each row.
+
+ranking ..
+
+```{r}
+weather_df %>% 
+  group_by(name, month) %>% 
+  mutate(temp_rank = min_rank(tmax)) %>% 
+  filter(temp_rank == 1) %>% 
+  view()
+```
+
+min_rank function gives you the lowest rank (#1) for the variable you specify
+
+```{r}
+weather_df %>% 
+  group_by(name, month) %>% 
+  mutate(temp_rank = min_rank(desc(tmax))) %>% 
+  filter(temp_rank == 1) %>% 
+  view()
+```
+min_rank(desc(tmax)) allows you to calculate from the bottom up.
+
+lag.  take a bunch of variables (so row values), copy and shift over, and descend.
+
+```{r}
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(
+    lag_temp = lag(tmax)
+  )
+```
+
+```{r}
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(
+    lag_temp = lag(tmax, 5)
+  )
+```
+lag by 5.
+
+lag allows you to compare today's values with some specified prior day's values (like means, etc.)
+
+```{r}
+weather_df %>% 
+  group_by(name) %>% 
+  mutate(temp_change = tmax - lag(tmax)) %>% 
+  summarize(
+    temp_change_max = max(temp_change, na.rm = TRUE),
+    temp_change_sd = sd(temp_change, na.rm = TRUE)
+  )
+```
+take home point: we answered the question: can you compute the day to day temperature variability and standard deviation for each of the weather station over the course of the year.  Sounds difficult, but conceptually, this is how yuo would do it in 6 lines of code!
+From coding perspective, answering a relatively complex question in a way that is clear and coherent in a pretty short sequence of code.  Pat yourself on the back.
+
+
+
